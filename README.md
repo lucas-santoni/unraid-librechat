@@ -66,8 +66,50 @@ Unraid UI. Values you provide win over any pre-existing `.env` content.
 ## Custom endpoints (librechat.yaml)
 
 Drop a `librechat.yaml` at `/mnt/user/appdata/librechat/librechat.yaml`. It
-gets symlinked into the container at start. Reference:
+gets symlinked into the container at start, and a container restart picks up
+any changes. Full reference:
 <https://www.librechat.ai/docs/configuration/librechat_yaml>
+
+### Example: local OpenAI-compatible endpoint (LM Studio, Ollama, etc.)
+
+```yaml
+version: 1.2.1
+cache: true
+
+endpoints:
+  custom:
+    - name: "LM Studio"
+      apiKey: "lm-studio"                         # any non-empty string; server ignores it
+      baseURL: "http://192.168.1.42:1234/v1"      # LAN IP or Tailscale 100.x.y.z
+      models:
+        default: ["local-model"]
+        fetch: true                                # auto-populate from /v1/models
+      titleConvo: true
+      titleModel: "current_model"
+      modelDisplayLabel: "LM Studio"
+      dropParams: ["stop", "user"]                 # flags LM Studio does not accept
+
+# Since no RAG is bundled, disable the paperclip on endpoints that cannot
+# accept inline file content. Skip this block for endpoints that do (GPT-4o,
+# Claude, etc.).
+fileConfig:
+  endpoints:
+    "LM Studio":
+      disabled: true
+  serverFileSizeLimit: 20
+  avatarSizeLimit: 2
+```
+
+### Notes
+
+- If the container runs on Unraid and the LLM host runs on your Mac (or any
+  other machine), use the LAN IP or a Tailscale 100.x.y.z. `localhost` inside
+  the container means the container itself, not your host.
+- For Tailscale MagicDNS names to resolve inside the container, add
+  `--dns=100.100.100.100` to the container's Extra Parameters. Otherwise stick
+  with the raw `100.x` IP.
+- Changes require a container restart (Docker tab -> Restart) for LibreChat
+  to re-read the yaml.
 
 ## How updates flow
 
