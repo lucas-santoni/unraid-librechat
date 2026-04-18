@@ -1,0 +1,8 @@
+#!/command/with-contenv bash
+set -euo pipefail
+exec s6-setuidgid librechat mongod \
+  --dbpath /config/mongo \
+  --bind_ip 127.0.0.1 \
+  --port 27017 \
+  --wiredTigerCacheSizeGB "${MONGO_WIREDTIGER_CACHE_GB:-0.5}" \
+  --quiet

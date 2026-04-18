@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<PluginPackages>
+  <PluginPackage>
+    <Name>LibreChat</Name>
+    <Author>lucas-santoni</Author>
+    <Repository>https://github.com/lucas-santoni/unraid-librechat</Repository>
+    <Category>Productivity: Tools: Other:</Category>
+    <TemplateURL>https://raw.githubusercontent.com/lucas-santoni/unraid-librechat/main/unraid/librechat.xml</TemplateURL>
+    <Project>https://github.com/lucas-santoni/unraid-librechat</Project>
+    <Support>https://github.com/lucas-santoni/unraid-librechat/issues</Support>
+    <Overview>A single-container LibreChat image for Unraid that bundles LibreChat, MongoDB, and MeiliSearch behind s6-overlay. One row in the Docker tab, one appdata mount, secrets auto-generated on first boot.</Overview>
+    <Icon>https://raw.githubusercontent.com/lucas-santoni/unraid-librechat/main/unraid/icon.png</Icon>
+  </PluginPackage>
+</PluginPackages>

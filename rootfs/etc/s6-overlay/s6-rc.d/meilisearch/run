@@ -1,0 +1,13 @@
+#!/command/with-contenv bash
+set -euo pipefail
+if [[ -f /config/.env ]]; then set -a; . /config/.env; set +a; fi
+# Meilisearch in --env production writes PID/snapshot files relative to CWD.
+# Service dir is read-only rootfs, so cd into the (writable) db dir first.
+cd /config/meili
+exec s6-setuidgid librechat /usr/local/bin/meilisearch \
+  --db-path /config/meili \
+  --http-addr 127.0.0.1:7700 \
+  --master-key "${MEILI_MASTER_KEY}" \
+  --no-analytics \
+  --env production \
+  --max-indexing-memory "${MEILI_MAX_INDEXING_MEMORY:-512MB}"

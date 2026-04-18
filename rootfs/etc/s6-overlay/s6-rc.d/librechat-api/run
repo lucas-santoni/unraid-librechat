@@ -1,0 +1,10 @@
+#!/command/with-contenv bash
+set -euo pipefail
+if [[ -f /config/.env ]]; then set -a; . /config/.env; set +a; fi
+/usr/local/bin/wait-for-tcp 127.0.0.1 27017 120
+/usr/local/bin/wait-for-tcp 127.0.0.1 7700 120
+cd /app/api
+export HOME=/config
+export LD_PRELOAD="/usr/lib/$(uname -m)-linux-gnu/libjemalloc.so.2"
+export NODE_OPTIONS="--max-old-space-size=${NODE_MAX_OLD_SPACE_SIZE:-2048}"
+exec s6-setuidgid librechat node server/index.js

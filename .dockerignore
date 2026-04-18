@@ -1,0 +1,13 @@
+.git
+.github
+.gitignore
+.gitattributes
+.dockerignore
+README.md
+docs/
+unraid/
+ca_profile.xml
+scripts/node_modules
+scripts/dist
+**/node_modules
+**/.DS_Store

@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+# wait-for-tcp HOST PORT [TIMEOUT_SECONDS]
+set -euo pipefail
+host="${1:?host required}"
+port="${2:?port required}"
+timeout="${3:-120}"
+start=$(date +%s)
+while ! (exec 3<>"/dev/tcp/${host}/${port}") 2>/dev/null; do
+  now=$(date +%s)
+  if (( now - start >= timeout )); then
+    echo "wait-for-tcp: timeout after ${timeout}s waiting for ${host}:${port}" >&2
+    exit 1
+  fi
+  sleep 1
+done
+exec 3>&- 2>/dev/null || true

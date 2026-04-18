@@ -1,0 +1,51 @@
+<?xml version="1.0"?>
+<Container version="2">
+  <Name>librechat</Name>
+  <Repository>ghcr.io/lucas-santoni/unraid-librechat:latest</Repository>
+  <Registry>https://ghcr.io/lucas-santoni/unraid-librechat</Registry>
+  <Network>bridge</Network>
+  <Privileged>false</Privileged>
+  <Shell>bash</Shell>
+  <Support>https://github.com/lucas-santoni/unraid-librechat/issues</Support>
+  <Project>https://github.com/lucas-santoni/unraid-librechat</Project>
+  <Overview>Self-contained LibreChat for Unraid. Bundles LibreChat, MongoDB, and MeiliSearch into a single container supervised by s6-overlay. All persistent state lives under one mount at /mnt/user/appdata/librechat. Secrets are auto-generated on first start and can be overridden via the Advanced fields below. See the project README for details on providing a custom librechat.yaml and updating the image.</Overview>
+  <Category>Productivity: Tools: Other:</Category>
+  <WebUI>http://[IP]:[PORT:3080]/</WebUI>
+  <TemplateURL>https://raw.githubusercontent.com/lucas-santoni/unraid-librechat/main/unraid/librechat.xml</TemplateURL>
+  <Icon>https://raw.githubusercontent.com/lucas-santoni/unraid-librechat/main/unraid/icon.png</Icon>
+  <ExtraParams></ExtraParams>
+  <PostArgs></PostArgs>
+  <CPUset></CPUset>
+  <DateInstalled></DateInstalled>
+  <DonateText></DonateText>
+  <DonateLink></DonateLink>
+  <Requires>A running Unraid server with an appdata share. On first start the container auto-generates CREDS_KEY, CREDS_IV, JWT_SECRET, JWT_REFRESH_SECRET, and MEILI_MASTER_KEY into /mnt/user/appdata/librechat/.env. Provide your own values in the Advanced fields if you want to reuse a specific Meili index or rotate secrets without regeneration.</Requires>
+
+  <Config Name="WebUI Port" Target="3080" Default="3080" Mode="tcp" Description="HTTP port the LibreChat UI listens on." Type="Port" Display="always" Required="true" Mask="false">3080</Config>
+
+  <Config Name="Config / Data" Target="/config" Default="/mnt/user/appdata/librechat" Mode="rw" Description="Persistent state. Holds mongo/, meili/, uploads/, images/, logs/, the .env file, and an optional librechat.yaml." Type="Path" Display="always" Required="true" Mask="false">/mnt/user/appdata/librechat</Config>
+
+  <Config Name="Timezone" Target="TZ" Default="UTC" Mode="" Description="IANA timezone, e.g. Europe/Paris. List at https://en.wikipedia.org/wiki/List_of_tz_database_time_zones." Type="Variable" Display="always" Required="true" Mask="false">UTC</Config>
+
+  <Config Name="Allow Registration" Target="ALLOW_REGISTRATION" Default="true" Mode="" Description="When true, anyone who can reach the UI can create an account. Set to false once your users are registered." Type="Variable" Display="always" Required="false" Mask="false">true</Config>
+
+  <Config Name="PUID" Target="PUID" Default="99" Mode="" Description="User ID that owns files under /config. Unraid default is 99 (nobody)." Type="Variable" Display="advanced" Required="false" Mask="false">99</Config>
+
+  <Config Name="PGID" Target="PGID" Default="100" Mode="" Description="Group ID that owns files under /config. Unraid default is 100 (users)." Type="Variable" Display="advanced" Required="false" Mask="false">100</Config>
+
+  <Config Name="Meili Master Key" Target="MEILI_MASTER_KEY" Default="" Mode="" Description="Leave blank to auto-generate on first boot. Provide a value only if you want to reuse an existing Meili index." Type="Variable" Display="advanced" Required="false" Mask="true"></Config>
+
+  <Config Name="CREDS_KEY" Target="CREDS_KEY" Default="" Mode="" Description="32-byte hex. Leave blank to auto-generate. openssl rand -hex 32" Type="Variable" Display="advanced" Required="false" Mask="true"></Config>
+
+  <Config Name="CREDS_IV" Target="CREDS_IV" Default="" Mode="" Description="16-byte hex. Leave blank to auto-generate. openssl rand -hex 16" Type="Variable" Display="advanced" Required="false" Mask="true"></Config>
+
+  <Config Name="JWT_SECRET" Target="JWT_SECRET" Default="" Mode="" Description="32-byte hex. Leave blank to auto-generate. openssl rand -hex 32" Type="Variable" Display="advanced" Required="false" Mask="true"></Config>
+
+  <Config Name="JWT_REFRESH_SECRET" Target="JWT_REFRESH_SECRET" Default="" Mode="" Description="32-byte hex. Leave blank to auto-generate. openssl rand -hex 32" Type="Variable" Display="advanced" Required="false" Mask="true"></Config>
+
+  <Config Name="Mongo WiredTiger cache (GB)" Target="MONGO_WIREDTIGER_CACHE_GB" Default="0.5" Mode="" Description="WiredTiger internal cache size for MongoDB, in gigabytes." Type="Variable" Display="advanced" Required="false" Mask="false">0.5</Config>
+
+  <Config Name="Meili max indexing memory" Target="MEILI_MAX_INDEXING_MEMORY" Default="512MB" Mode="" Description="Upper bound on RAM Meili uses during indexing." Type="Variable" Display="advanced" Required="false" Mask="false">512MB</Config>
+
+  <Config Name="Node max-old-space-size (MB)" Target="NODE_MAX_OLD_SPACE_SIZE" Default="2048" Mode="" Description="LibreChat API Node.js heap cap in megabytes." Type="Variable" Display="advanced" Required="false" Mask="false">2048</Config>
+</Container>

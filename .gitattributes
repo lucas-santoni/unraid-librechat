@@ -1,0 +1,9 @@
+* text=auto eol=lf
+
+*.png binary
+*.jpg binary
+*.ico binary
+
+# shell scripts in rootfs must stay LF even on Windows checkouts
+rootfs/** text eol=lf
+*.sh text eol=lf
