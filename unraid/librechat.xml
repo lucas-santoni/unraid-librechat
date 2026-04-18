@@ -27,7 +27,7 @@
 
   <Config Name="Timezone" Target="TZ" Default="UTC" Mode="" Description="IANA timezone, e.g. Europe/Paris. List at https://en.wikipedia.org/wiki/List_of_tz_database_time_zones." Type="Variable" Display="always" Required="true" Mask="false">UTC</Config>
 
-  <Config Name="Allow Registration" Target="ALLOW_REGISTRATION" Default="true" Mode="" Description="When true, anyone who can reach the UI can create an account. Set to false once your users are registered." Type="Variable" Display="always" Required="false" Mask="false">true</Config>
+  <Config Name="Allow Registration" Target="ALLOW_REGISTRATION" Default="false" Mode="" Description="When true, anyone who can reach the UI can create an account. Start with 'true' on first boot so you can register yourself, then flip back to 'false' to lock the instance. Do NOT leave 'true' on a publicly reachable deployment." Type="Variable" Display="always" Required="false" Mask="false">false</Config>
 
   <Config Name="PUID" Target="PUID" Default="99" Mode="" Description="User ID that owns files under /config. Unraid default is 99 (nobody)." Type="Variable" Display="advanced" Required="false" Mask="false">99</Config>
 

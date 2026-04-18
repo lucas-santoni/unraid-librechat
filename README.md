@@ -1,12 +1,17 @@
 # unraid-librechat
 
-A single-container LibreChat image for Unraid. Bundles LibreChat, MongoDB, and
-MeiliSearch behind an s6-overlay v3 supervision tree on `debian:bookworm-slim`.
-One row in the Docker tab, one appdata mount, secrets auto-generated on first
-boot.
+A single-container LibreChat image for Unraid. Bundles LibreChat, MongoDB 7,
+and MeiliSearch behind an s6-overlay v3 supervision tree on
+`debian:bookworm-slim`. One row in the Docker tab, one appdata mount, secrets
+auto-generated on first boot.
 
 RAG (document upload + vector search) is intentionally **not** included. Use
 the UI's Agents + your preferred embeddings provider if you need it.
+
+MongoDB 7 (not 8) is shipped because the `mongo:8.0` image requires glibc 2.38
+(Ubuntu 24.04) which does not match our Debian bookworm runtime, and MongoDB
+does not publish arm64 Debian packages. Mongo 7 is still under active
+security support.
 
 Image: `ghcr.io/lucas-santoni/unraid-librechat:latest`
 
@@ -23,6 +28,11 @@ Image: `ghcr.io/lucas-santoni/unraid-librechat:latest`
 2. Back under **Add Container**, pick `librechat` from the template dropdown.
 3. Leave defaults; only the **Timezone** field is required. Click **Apply**.
 4. Wait 10-20 seconds for first boot, then open the WebUI link.
+5. **First-time registration:** registration is disabled by default. Either
+   (a) set `ALLOW_REGISTRATION=true` in the template, apply, create your
+   account, then flip back to `false`; or (b) leave it off and create a user
+   via `docker exec librechat npm --prefix /app/api run create-user` (LibreChat's
+   CLI).
 
 The container persists everything under `/mnt/user/appdata/librechat/`:
 
@@ -118,6 +128,24 @@ completed. `s6-rc -da list` shows anything that failed.
 Only **3080** is exposed. Mongo and Meili listen on `127.0.0.1` inside the
 container. If you need to expose one for debugging, add `-p 7700:7700` (etc)
 to Extra Parameters in the template.
+
+## Security notes
+
+- **HTTP only, no TLS.** LibreChat serves plain HTTP on 3080. For anything
+  beyond LAN access put it behind a reverse proxy that terminates TLS
+  (Traefik, Caddy, swag, nginx-proxy-manager).
+- **Registration defaults to disabled** to protect against an internet-exposed
+  instance getting enrolled by strangers. Flip on temporarily during bootstrap
+  and back off afterwards, or use the CLI path above.
+- **Internal services (Mongo, Meili) run without authentication on
+  `127.0.0.1`** inside the container. Anyone with `docker exec` access has full
+  DB access. This is acceptable for single-tenant home use; if you share the
+  Unraid host with untrusted users, isolate the container.
+- **`/config/.env` is stored plaintext** with mode 600, owned by the runtime
+  user. Confidentiality depends on your Unraid disk encryption.
+- **Binaries downloaded from GitHub releases are SHA-256 verified** at build
+  time (s6-overlay, MeiliSearch). Base images (`mongo:7-jammy`) are pinned to
+  content digests.
 
 ## Renaming the repo
 
