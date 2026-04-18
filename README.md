@@ -30,9 +30,12 @@ Image: `ghcr.io/lucas-santoni/unraid-librechat:latest`
 4. Wait 10-20 seconds for first boot, then open the WebUI link.
 5. **First-time registration:** registration is disabled by default. Either
    (a) set `ALLOW_REGISTRATION=true` in the template, apply, create your
-   account, then flip back to `false`; or (b) leave it off and create a user
-   via `docker exec librechat npm --prefix /app/api run create-user` (LibreChat's
-   CLI).
+   account in the UI, then flip back to `false`; or (b) leave it off and
+   create a user via LibreChat's CLI:
+   ```
+   docker exec -it librechat node /app/config/create-user.js
+   ```
+   Interactive prompt for email, name, username, and password.
 
 The container persists everything under `/mnt/user/appdata/librechat/`:
 
